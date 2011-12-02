@@ -1,0 +1,11 @@
+{
+  "hipchat": {
+    "token":"",
+    "room":""
+  },
+  "beanstalk": {
+    "domain":"",
+    "username":"",
+    "password":""
+  }
+}
