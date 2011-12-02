@@ -78,10 +78,13 @@ exports.hipShot =
         @lastId = release.id
         repo = @repos[release.repository_id]
         message = "
-          <b><a href='#{@beanstalk.repoURL(repo)}'>#{repo.title}</a></b>
-          <h4>(#{release.environment_name})</h4>
-          <p>Deployed by #{release.author}</p>
-          <p>#{release.comment}</p>"
+          <b><a href='#{@beanstalk.repoURL(repo)}'>#{repo.title}</a>
+          <br />
+          #{release.environment_name}</b>
+          <br />
+          <i>Deployed by #{release.author}</i>
+          <br />
+          #{release.comment}"
         @hipchat.notify(message)
         # TODO: log it as well
         
