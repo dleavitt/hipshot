@@ -1,12 +1,22 @@
 {
   "name": "hipshot",
+  "version": "0.0.1",
+  "description": "Beanstalk release to HipChat API adapter",
+  "author": "Daniel Leavitt <daniel@hyfn.com>",
+  "homepage": "https://github.com/dleavitt/hipshot",
+  "contributors": [ 
+    { "name": "Daniel Leavitt", "email": "daniel@hyfn.com" }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dleavitt/hipshot.git"
+  },
   "dependencies": {
     "restler": ">= 0.2.1",
-    "underscore": ">= 0.0.0",
-    "moment": ">= 1.0.1"
+    "underscore": ">= 0.0.0"
   },
   "devDependencies": {
-    
+    "coffee-script": "> 1.0.0"
   },
   "bin": { "hipshot": "./bin/hipshot.js" },
   "engines": { "node":">= 0.4.0 < 0.7.0" }
