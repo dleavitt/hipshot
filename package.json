@@ -1,0 +1,14 @@
+{
+  "name": "growl-deploy",
+  "dependencies": {
+    "restler": ">= 0.2.1",
+    "underscore": ">= 0.0.0",
+    "moment": ">= 1.0.1"
+  },
+  "devDependencies": {
+    
+  },
+
+  "bin": { "growl-deploy": "./bin/growl-deploy.js" },
+  "engines": { "node":">= 0.4.0 < 0.7.0" }
+}
