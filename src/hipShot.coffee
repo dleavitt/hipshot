@@ -19,6 +19,9 @@ class BeanstalkAppAPI
   
   get: (url, options) -> 
     rest.get(@baseURL+url+'.json', @defaults(options)).on 'error', errorHandler
+  
+  repoURL: (repo) ->
+    "https://#{@domain}.beanstalkapp.com/#{repo.name}"
         
 # end class BeanstalkAppAPI
 
@@ -27,18 +30,22 @@ class HipChatAPI
     @baseURL = "https://api.hipchat.com/v1"
   
   defaults: (opts = {}) ->
-    _.defaults opts,
-      room_id: @roomID,
-      auth_token = @token,
+    _.defaults opts, 
+      room_id: @roomID
+      auth_token: @token
       format: 'json'
   
   post: (url, options) ->
-    rest.get(@baseURL+url, @defaults(options)).on 'error', errorHandler
+    rest.post(@baseURL+url, data: @defaults(options)).on 'error', errorHandler
     
-  notify: (message) ->
-    post '/rooms/messages', 
+  notify: (message, callback) ->
+    opts = 
       from: "Beanstalk"
-      
+      notify: false
+      color: "green"
+      message: message
+    @post('/rooms/message', opts)
+      .on 'error', (a,b) => errorHandler
 
 parseCredString = (credString) ->
   if matches = credString?.match(/^(\w+):(.+)@(\w+)$/)
@@ -49,7 +56,7 @@ parseCredString = (credString) ->
 
 errorHandler = (data, res) ->
   console.log(data)
-  sys.puts "Beanstalk API Errors:"+_(data).map((line) -> "\n'#{line}'").join()
+  # sys.puts "Beanstalk API Errors:"+_(data).map((line) -> "\n'#{line}'").join()
   
 exports.hipShot =
   repos: {}
@@ -57,9 +64,11 @@ exports.hipShot =
   init: (path = "config.json") ->
     conf = JSON.parse(fs.readFileSync path, "utf8")
     @beanstalk = new BeanstalkAppAPI(conf.beanstalk.domain, conf.beanstalk.username, conf.beanstalk.password)
+    @hipchat = new HipChatAPI(conf.hipchat.token, conf.hipchat.room)
+    # TODO: periodically refresh list of repos
     @getRepos =>
       @check (data) =>
-        @lastId = data[5]?.release.id or 0
+        @lastId = data[1]?.release.id or 0
         @notify(data)
       
   notify: (data) ->
@@ -67,7 +76,15 @@ exports.hipShot =
       release = item.release
       if release.id > @lastId
         @lastId = release.id
-        console.log @repos[release.repository_id]
+        repo = @repos[release.repository_id]
+        message = "
+          <b><a href='#{@beanstalk.repoURL(repo)}'>#{repo.title}</a></b>
+          <h4>(#{release.environment_name})</h4>
+          <p>Deployed by #{release.author}</p>
+          <p>#{release.comment}</p>"
+        @hipchat.notify(message)
+        # TODO: log it as well
+        
     # check again in .5s
     setTimeout () =>
       @check (data) => @notify(data)
@@ -81,9 +98,3 @@ exports.hipShot =
       @repos = {}
       data.forEach (rawRepo) => @repos[rawRepo.repository.id] = rawRepo.repository
       callback(@repos)
-    
-  message: (repo, release) ->
-    title = "#{repo.title} (#{release.environment_name})"
-    msg = "#{release.comment} \n - #{release.author}"
-    # TODO: add date
-    cmd = "growlnotify -I ../lib/beanstalk.png -n growl-deploy -t '#{title}' -m '#{msg}'" 

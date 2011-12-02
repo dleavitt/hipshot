@@ -1,5 +1,5 @@
 {
-  "name": "growl-deploy",
+  "name": "hipshot",
   "dependencies": {
     "restler": ">= 0.2.1",
     "underscore": ">= 0.0.0",
@@ -9,6 +9,6 @@
     
   },
 
-  "bin": { "growl-deploy": "./bin/growl-deploy.js" },
+  "bin": { "hipshot": "./bin/hipshot.js" },
   "engines": { "node":">= 0.4.0 < 0.7.0" }
 }
