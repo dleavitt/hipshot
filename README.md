@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/dleavitt/hipshot.png)](http://travis-ci.org/dleavitt/hipshot)
 Usage:
 
 	hipshot [path-to-config-file]
